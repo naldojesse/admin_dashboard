@@ -33,9 +33,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.
                 //Allows restricting access based upon the HttpServletRequest
                 authorizeRequests()
-                    //PathMatcher implementation for Ant-style path patterns
-                    //we are allowing everything in that matches these to everyone
-                    .antMatchers("/css/**", "/js/**", "/registration").permitAll()
+                //PathMatcher implementation for Ant-style path patterns
+                //we are allowing everything in that matches these to everyone
+                .antMatchers("/static/**", "/registration").permitAll()
+                //implementation of authorization
+                .antMatchers("/admin/**").access("hasRole('ADMIN')")
                 //anyRequest: Maps any request
                 //authenticated: specify URLs that are allowed by authenticated users only
                 .anyRequest().authenticated()

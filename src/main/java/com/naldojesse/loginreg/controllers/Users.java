@@ -41,8 +41,16 @@ public class Users {
         if (result.hasErrors()) {
             return "loginregPage.jsp";
         }
-        userService.saveWithUserRole(user);
+//        userService.saveWithUserRole(user);
+        userService.saveUserWithAdminRole(user);
         return "redirect:/login";
+    }
+
+    @RequestMapping("/admin")
+    public String adminPage(Principal principal, Model model) {
+        String username = principal.getName();
+        model.addAttribute("currentUser", userService.findByUsername(username));
+        return "adminPage.jsp";
     }
 
 //    @RequestMapping("/login")
@@ -76,7 +84,7 @@ public class Users {
 //        return "success.jsp";
 //    }
 
-    @RequestMapping(value = {"/", "/home}"})
+    @RequestMapping(value = {"/"})
     public String home(@ModelAttribute("signInDate") String signInDate, Principal principal, Model model) {
 
         Date date = new Date();
