@@ -1,5 +1,6 @@
 package com.naldojesse.loginreg.controllers;
 
+import com.naldojesse.loginreg.models.Role;
 import com.naldojesse.loginreg.models.User;
 import com.naldojesse.loginreg.services.UserService;
 import com.naldojesse.loginreg.validators.UserValidator;
@@ -12,10 +13,14 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Date;
+import java.util.List;
 
 @SessionAttributes("signInDate")
 @Controller
 public class Users {
+
+    private boolean checkedAdminExists = false;
+    private boolean adminExists = false;
 
     @ModelAttribute("signInDate")
     public String getSignInDate() {
@@ -54,8 +59,25 @@ public class Users {
         if (result.hasErrors()) {
             return "loginregPage.jsp";
         }
-//        userService.saveWithUserRole(user);
-        userService.saveUserWithAdminRole(user);
+
+
+        if (!checkedAdminExists) {
+            List<User> users = userService.findAll();
+            for (int i = 0; i < users.size(); i++) {
+                if(users.get(i).getRoles().get(0).getName().equals("ROLE_ADMIN")) {
+                    adminExists = true;
+                    checkedAdminExists = true;
+                    break;
+                }
+            }
+        }
+
+        if (!adminExists) {
+            userService.saveUserWithAdminRole(user);
+        } else {
+            userService.saveWithUserRole(user);
+        }
+
         return "redirect:/login";
     }
 
@@ -64,16 +86,22 @@ public class Users {
     public String adminPage(Principal principal, Model model) {
         String username = principal.getName();
         model.addAttribute("currentUser", userService.findByUsername(username));
+        model.addAttribute("users", userService.findAll());
         return "adminPage.jsp";
     }
 
-//    @RequestMapping("/login")
-//    public String login(@Valid @ModelAttribute("user") User user) {
-//        return "loginregPage.jsp";
-//    }
 
 
-    /** Method handling the login
+
+    /*
+    These next two methods handle "successful login and unccessful login". Spring Security will handle the /login POST request and process it.
+     */
+
+
+    /**
+     * Spring Security will redirect here from /login?error or /login?logout
+     * Will show error messages if unsuccessful login
+     * If user logs out, user is told that they have done so correctly.
      *
      * @param error
      * @param logout
@@ -97,6 +125,7 @@ public class Users {
     }
 
     /**
+     * Spring Security will redirect here from successful authentication of a user to "/" (root route)
      * Method that will be accssible to users after proper authentication.
      * Home method accepts GET requests for "/" url
      * After successful authentication, the name of the principal is retrieved via the .getName() method
@@ -113,8 +142,25 @@ public class Users {
         Date date = new Date();
         model.addAttribute("signInDate", date);
         String username = principal.getName();
-        model.addAttribute("currentUser", userService.findByUsername(username));
-        return "success.jsp";
+        User user = userService.findByUsername(username);
+        List<Role> user_roles = user.getRoles();
+        String role = user_roles.get(0).getName();
+        model.addAttribute("currentUser", user);
+
+
+        if (role.equals("ROLE_ADMIN")) {
+            return "redirect:/admin";
+        } else {
+            return "success.jsp";
+        }
+    }
+
+
+    //******************** ADMIN METHODS **************************
+    @RequestMapping("/users/delete/{id}")
+    public String deleteUser(@PathVariable("id") Long id) {
+        userService.destroyUser(id);
+        return "redirect:/";
     }
 
 

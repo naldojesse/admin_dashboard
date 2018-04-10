@@ -13,6 +13,8 @@
 <body>
     <h1>Welcome <c:out value="${currentUser.first_name}"/></h1>
 
+    ${currentUser.roles.get(0).name}
+
     <div>
         <p>First Name: <c:out value="${currentUser.first_name}"/></p>
         <p>Last Name: <c:out value="${currentUser.last_name}"/></p>
