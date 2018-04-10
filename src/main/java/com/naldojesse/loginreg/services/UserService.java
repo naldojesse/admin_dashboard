@@ -14,6 +14,14 @@ public class UserService {
     private RoleRepository roleRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
+    /**
+     * Class constructor creating instances
+     *
+     * @param userRepository the user repository interface
+     * @param bCryptPasswordEncoder module used to encode passwords
+     * @param roleRepository the role repository interface
+     */
+
     public UserService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, RoleRepository roleRepository) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;

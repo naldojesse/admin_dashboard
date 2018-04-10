@@ -20,6 +20,9 @@ public class User {
     private String last_name;
     @Size(min=10)
     private String password;
+    /*
+    username is used here instead of email as a work around to Spring Security's constraints with loading a user only via username
+     */
     @Email(message = "Email should be valid")
     private String username;
     @Transient

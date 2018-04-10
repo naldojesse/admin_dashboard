@@ -10,22 +10,33 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private UserDetailsServiceImplementation userDetailsServiceImplementation;
 
+    /** Class constructor injecting the custom UserDetailsServiceImplementation service for use with Bcrypt
+     *
+     * @param userDetailsServiceImplementation the UserDetailsServiceImplementation service
+     */
     public WebSecurityConfig(UserDetailsServiceImplementation userDetailsServiceImplementation) {
         this.userDetailsServiceImplementation = userDetailsServiceImplementation;
     }
 
-    //add Bcrypt bean
+
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+
+    /** Handles the configuration for authentication.
+     * Specifies who can access certain urls, and more.
+     * @param http the HttpSecurity object
+     * @throws Exception
+     */
 
     //this will override the pop up authentication and add configuration for FORM authentication
     @Override
@@ -56,6 +67,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll();
     }
 
+    /**
+     * Method that configures Spring Security to use custom implementation of the UserDetailsService with Bcrypt.
+     * @param auth
+     * @throws Exception
+     */
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsServiceImplementation).passwordEncoder(bCryptPasswordEncoder());
