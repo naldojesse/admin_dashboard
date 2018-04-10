@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -44,6 +45,21 @@ public class UserService {
         user.setRoles(roleRepository.findByName("ROLE_ADMIN"));
         userRepository.save(user);
     }
+
+    public void changeUserRoleToAdmin(Long id) {
+        Optional<User> userExists = userRepository.findById(id);
+        if (userExists.isPresent()) {
+            User user = userExists.get();
+            user.setRoles(roleRepository.findByName("ROLE_ADMIN"));
+            userRepository.save(user);
+        }
+
+//        userRepository.save(user);
+    }
+
+//    public User findById(Long id) {
+//        return userRepository.findById();
+//    }
 
     public List<User> findAll() {
         return userRepository.findAll();

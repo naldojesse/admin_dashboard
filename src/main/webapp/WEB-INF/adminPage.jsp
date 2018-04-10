@@ -6,10 +6,9 @@
 <body>
     <h1>Welcome to the Admin Page <c:out value="${currentUser.username}"/></h1>
 
-    <form id="logoutForm" method="POST" action="/login">
-        <input type="hidden" name="logout">
-        <input type="hidden" name="${_csrf.parameterName}">
-        <input type="submit" value="Logout!">
+    <form id="logoutForm" method="POST" action="/logout">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        <input type="submit" value="Logout"/>
     </form>
 
     <table>
@@ -28,7 +27,7 @@
                     </c:when>
                     <c:otherwise>
                         <td><a href="<c:url value="/users/delete/${user.id}"/>">Delete</a>
-                            <a href="<c:url value="/roles/addAdmin/"/>">Make Admin</a>
+                            <a href="<c:url value="/roles/addAdmin/${user.id}"/>">Make Admin</a>
                         </td>
                     </c:otherwise>
                 </c:choose>

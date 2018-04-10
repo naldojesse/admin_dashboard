@@ -163,5 +163,10 @@ public class Users {
         return "redirect:/";
     }
 
+    @RequestMapping("/roles/addAdmin/{id}")
+    public String addAdmin(@PathVariable("id") Long id) {
+        userService.changeUserRoleToAdmin(id);
+        return "redirect:/";
+    }
 
 }
